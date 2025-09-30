@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv';
 import express from 'express';
 import { ImapService } from './ImapService';
 import { ElasticsearchService } from './ElasticsearchService';
+import { AIService } from './AIService';
 
 dotenv.config();
 
@@ -45,16 +46,20 @@ const accounts = [
 ]
 
 async function main() {
+    
     // Initialize the Elastisearch Storage Service
     const esService = new ElasticsearchService();
     await esService.checkConnection();
     await esService.createIndexIfNotExists();
+    
+    // Initialize the AI Service
+    const aiService = new AIService();
 
     // Start IMAP synchronization for each account
     console.log('Starting Onebox Email Synchronizer...');
     for(const config of accounts) {
         if(config.user && config.password) {
-            const imapService = new ImapService(config, esService);
+            const imapService = new ImapService(config, esService, aiService);
             imapService.connect();
         }
     }

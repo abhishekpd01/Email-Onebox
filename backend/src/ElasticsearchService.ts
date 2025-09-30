@@ -1,9 +1,11 @@
 import { Client } from '@elastic/elasticsearch';
 import { ParsedMail } from 'mailparser';
+import { EmailCategory } from './AIService';
 
 // Define type for email document for storing
 export interface EmailDocument extends ParsedMail {
-    account : string
+    account : string,
+    category?: EmailCategory
 }
 
 export class ElasticsearchService {
@@ -39,7 +41,8 @@ export class ElasticsearchService {
               from: { type: 'object' },
               to: { type: 'object' },
               text: { type: 'text' },
-              account: { type: 'keyword' }, // 'keyword' is better for exact filtering
+              account: { type: 'keyword' }, // 'keyword' for exact filtering
+              category: { type: 'keyword' }, // add category as keyword
             },
           },
         },
