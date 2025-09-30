@@ -1,5 +1,7 @@
 import * as dotenv from 'dotenv';
+import express from 'express';
 import { ImapService } from './ImapService';
+import { ElasticsearchService } from './ElasticsearchService';
 
 dotenv.config();
 
@@ -42,15 +44,44 @@ const accounts = [
     },
 ]
 
-function main() {
-    console.log('Starting Onebox Email Synchronizer...');
+async function main() {
+    // Initialize the Elastisearch Storage Service
+    const esService = new ElasticsearchService();
+    await esService.checkConnection();
+    await esService.createIndexIfNotExists();
 
+    // Start IMAP synchronization for each account
+    console.log('Starting Onebox Email Synchronizer...');
     for(const config of accounts) {
         if(config.user && config.password) {
-            const imapService = new ImapService(config);
+            const imapService = new ImapService(config, esService);
             imapService.connect();
         }
     }
+
+    // Set up the Express Server
+    const app = express();
+    const port = process.env.PORT || 3000;
+    app.use(express.json());
+
+    app.get('/api/search', async (req, res) => {
+        const { q, account } = req.query;
+
+        if(!q || typeof q !== 'string') {
+            return res.status(400).send({ error: 'Query parameter "q" is required.' })
+        }
+
+
+        try {
+            const results = await esService.searchEmails(q, account as string);
+            res.json(results);
+        } catch (error) {
+            console.error('Search API error:', error);
+            res.status(500).send({ error: 'Failed to perform search.' });
+        }
+    })
+
+    app.listen(port, () => console.log(`Server is up and running 🏃 on PORT ${port}`))
 }
 
-main();
+main().catch(console.error);
