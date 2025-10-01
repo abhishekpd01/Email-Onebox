@@ -6,10 +6,12 @@ dotenv.config();
 if (!process.env.ELASTICSEARCH_API_KEY) {
     throw new Error("Missing ELASTICSEARCH_API_KEY");
 }
+import { EmailCategory } from './AIService';
 
 // Define type for email document for storing
 export interface EmailDocument extends ParsedMail {
-    account : string
+    account : string,
+    category?: EmailCategory
 }
 
 export class ElasticsearchService {
@@ -51,6 +53,7 @@ export class ElasticsearchService {
             to: { type: 'object' },
             text: { type: 'text' },
             account: { type: 'keyword' }, // 'keyword' is better for exact filtering
+            category: { type: 'keyword' }, // add category as keyword
           },
         },
       });
