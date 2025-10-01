@@ -20,7 +20,7 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^8.19.1",
+    "@elastic/elasticsearch": "^9.1.1",
     "dotenv": "^17.2.3",
     "mailparser": "^3.7.4",
     "node-imap": "^0.9.6"

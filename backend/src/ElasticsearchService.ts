@@ -1,5 +1,11 @@
 import { Client } from '@elastic/elasticsearch';
 import { ParsedMail } from 'mailparser';
+import dotenv from "dotenv";
+dotenv.config();
+
+if (!process.env.ELASTICSEARCH_API_KEY) {
+    throw new Error("Missing ELASTICSEARCH_API_KEY");
+}
 
 // Define type for email document for storing
 export interface EmailDocument extends ParsedMail {
@@ -10,7 +16,13 @@ export class ElasticsearchService {
     private client: Client;
 
     constructor() {
-        this.client = new Client({ node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200' });
+        this.client = new Client({ 
+            node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200',
+            auth: {
+                apiKey: process.env.ELASTICSEARCH_API_KEY || ''
+            }
+        });
+
     }
 
     public async checkConnection() : Promise<void>{
@@ -31,16 +43,14 @@ export class ElasticsearchService {
       console.log(`Index '${indexName}' does not exist. Creating...`);
       await this.client.indices.create({
         index: indexName,
-        body: {
-          mappings: {
-            properties: {
-              date: { type: 'date' },
-              subject: { type: 'text' },
-              from: { type: 'object' },
-              to: { type: 'object' },
-              text: { type: 'text' },
-              account: { type: 'keyword' }, // 'keyword' is better for exact filtering
-            },
+        mappings: {
+          properties: {
+            date: { type: 'date' },
+            subject: { type: 'text' },
+            from: { type: 'object' },
+            to: { type: 'object' },
+            text: { type: 'text' },
+            account: { type: 'keyword' }, // 'keyword' is better for exact filtering
           },
         },
       });
