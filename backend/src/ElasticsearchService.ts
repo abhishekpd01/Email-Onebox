@@ -53,6 +53,7 @@ export class ElasticsearchService {
             to: { type: 'object' },
             text: { type: 'text' },
             account: { type: 'keyword' }, // 'keyword' is better for exact filtering
+            category: { type: 'keyword' }, // add category as keyword
           },
         },
       });
