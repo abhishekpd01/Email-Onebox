@@ -4,6 +4,7 @@ import { inspect } from 'util';
 import { Readable } from 'stream';
 import { ElasticsearchService, EmailDocument } from './ElasticsearchService';
 import { AIService } from './AIService';
+import { NotificationService } from './NotificationService';
 
 export class ImapService {
     private imap: Imap;
@@ -11,7 +12,8 @@ export class ImapService {
     constructor(
         private config: Imap.Config,
         private esService: ElasticsearchService,
-        private aiService: AIService
+        private aiService: AIService,
+        private notificationService: NotificationService
     ) {
         this.imap = new Imap(config);
     }
@@ -41,6 +43,14 @@ export class ImapService {
             // Index the document in Elastiseatch
             await this.esService.indexEmail(emailDocument);
             console.log(`[${this.config.user}] Indexed email with category: ${parsed.subject}`);
+
+            // *** TRIGGER SLACK NOTIFICATION ***
+            // If the email is marked as 'Interested', send notifications.
+            if (category === 'Interested') {
+                this.notificationService.sendSlackNotification(emailDocument);
+                this.notificationService.sendGenericWebhook(emailDocument);
+            }
+
         } catch (error) {
             console.error(`[${this.config.user}] Error processing message:`, error);
         }

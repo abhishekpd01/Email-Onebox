@@ -3,6 +3,7 @@ import express from 'express';
 import { ImapService } from './ImapService';
 import { ElasticsearchService } from './ElasticsearchService';
 import { AIService } from './AIService';
+import { NotificationService } from './NotificationService';
 
 dotenv.config();
 
@@ -55,11 +56,14 @@ async function main() {
     // Initialize the AI Service
     const aiService = new AIService();
 
+    // Initialize Notification Service
+    const notificationService = new NotificationService();
+
     // Start IMAP synchronization for each account
     console.log('Starting Onebox Email Synchronizer...');
     for(const config of accounts) {
         if(config.user && config.password) {
-            const imapService = new ImapService(config, esService, aiService);
+            const imapService = new ImapService(config, esService, aiService, notificationService);
             imapService.connect();
         }
     }
