@@ -30,6 +30,7 @@
     "dotenv": "^17.2.3",
     "langchain": "^0.3.35",
     "mailparser": "^3.7.4",
-    "node-imap": "^0.9.6"
+    "node-imap": "^0.9.6",
+    "p-queue": "^9.0.0"
   }
 }
