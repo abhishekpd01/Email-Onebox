@@ -1,21 +1,3 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { writeFileSync } from 'fs';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Instead of file path, use environment variable
-if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
-  // Write the JSON content to a temporary file
-  const credentialsPath = path.resolve(__dirname, 'temp-credentials.json');
-  writeFileSync(credentialsPath, process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
-  process.env.GOOGLE_APPLICATION_CREDENTIALS = credentialsPath;
-} else {
-  // For local development, keep the file path
-  process.env.GOOGLE_APPLICATION_CREDENTIALS = path.resolve(__dirname, 'onebox-473910-3f4ec29cf285.json');
-}
-
 import { Pinecone } from '@pinecone-database/pinecone';
 import { Document } from '@langchain/core/documents';
 import { ChatVertexAI, VertexAIEmbeddings } from '@langchain/google-vertexai';
@@ -34,11 +16,12 @@ export class RagService {
         const pinecone = new Pinecone({
             apiKey: process.env.PINECONE_API_KEY!,
         });
-        const pineconeIndex = pinecone.Index('onebox-agenda');
+        const pineconeIndex = pinecone.Index('onebox-email');
 
         // Initialize Google Vertex AI Embedding model
         const embeddings = new VertexAIEmbeddings({
-            model: "text-embedding-gecko@003"
+            model: "text-embedding-004",
+            location: "us-central1"
         });
 
         // Initialize Pineconestore for langchain
@@ -46,8 +29,9 @@ export class RagService {
         
         // Initialize Google Vertex AI LLM model
         this.llm = new ChatVertexAI({
-            model: "gemini-1.0-pro",
-            temperature: 0.5
+            model: "gemini-2.0-flash-001",
+            temperature: 0.5,
+            location: "us-central1"
         });
     }
 

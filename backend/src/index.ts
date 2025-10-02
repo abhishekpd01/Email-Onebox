@@ -1,9 +1,9 @@
 import * as dotenv from 'dotenv';
 import express from 'express';
-import { ImapService } from './ImapService.js';
-import { ElasticsearchService } from './ElasticsearchService.js';
-import { AIService } from './AIService.js';
-import { RagService } from './RagService.js';
+import { ImapService } from './ImapService';
+import { ElasticsearchService } from './ElasticsearchService';
+import { AIService } from './AIService';
+import { RagService } from './RagService';
 import { NotificationService } from './NotificationService';
 
 dotenv.config();
@@ -108,8 +108,9 @@ async function main() {
         }
     });
 
-    app.post('/api-suggest-reply', async (req, res) => {
-        const emailContent = req.body;
+    app.post('/api/suggest-reply', async (req, res) => {
+        const { emailContent } = req.body;
+        console.log(emailContent);
         if(!emailContent || typeof emailContent !== 'string') {
             return res.status(400).send({ error: 'Request body must contain an "emailContent" field.' });
         }

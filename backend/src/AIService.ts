@@ -10,7 +10,7 @@ export class AIService {
     private readonly validCategories: EmailCategory[] = ['Interested', 'Not Interested', 'Meeting Booked', 'Spam', 'Out of Office'];
 
     constructor() {
-        const apiKey = process.env.GOOGLE_API_KEY;
+        const apiKey = process.env.GEMINI_API_KEY;
         if(!apiKey) {
             throw new Error("GOOGLE_API_KEY not set in Environment Variables.");
         } else {
