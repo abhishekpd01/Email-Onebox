@@ -70,21 +70,19 @@ async function main() {
     app.use(express.json());
 
     app.get('/api/search', async (req, res) => {
-        const { q, account } = req.query;
-
-        if(!q || typeof q !== 'string') {
-            return res.status(400).send({ error: 'Query parameter "q" is required.' })
-        }
-
+        
+        const q = req.query.q as string | undefined;
+        const account = req.query.account as string | undefined;
 
         try {
-            const results = await esService.searchEmails(q, account as string);
-            res.json(results);
+        // Pass the query, even if it's empty/undefined. The service will handle it.
+        const results = await esService.searchEmails(q || '', account);
+        res.json(results);
         } catch (error) {
-            console.error('Search API error:', error);
-            res.status(500).send({ error: 'Failed to perform search.' });
+        console.error('Search API error:', error);
+        res.status(500).send({ error: 'Failed to perform search.' });
         }
-    })
+    });
 
     app.listen(port, () => console.log(`Server is up and running 🏃 on PORT ${port}`))
 }

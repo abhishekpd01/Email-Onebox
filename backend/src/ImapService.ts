@@ -53,7 +53,7 @@ export class ImapService {
 
             // Sync last 30 days mails
             const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 2);     // for testing 0 days.....
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 1);     // for testing 0 days.....
             const searchCriteria = ['SINCE', thirtyDaysAgo.toISOString()];
 
             this.imap.search([searchCriteria], (err, results) => {

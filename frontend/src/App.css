@@ -1,0 +1,100 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+body {
+  margin: 0;
+}
+
+.app-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.app-header h1 {
+  font-size: 2.5rem;
+  color: #343a40;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.search-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.search-input,
+.account-filter {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  font-size: 1rem;
+}
+
+.email-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.email-item {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.email-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.email-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.email-from {
+  font-weight: bold;
+  color: #495057;
+}
+
+.email-subject {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.email-snippet {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.message {
+  text-align: center;
+  color: #6c757d;
+  padding: 2rem;
+}
+
+/* Category Tag Styles */
+.email-category {
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+}
+
+.email-category.interested { background-color: #28a745; }
+.email-category.not-interested { background-color: #dc3545; }
+.email-category.meeting-booked { background-color: #007bff; }
+.email-category.out-of-office { background-color: #6c757d; }
+.email-category.spam { background-color: #ffc107; color: #212529; }
+.email-category.uncategorized, .email-category.default { background-color: #e9ecef; color: #495057;}

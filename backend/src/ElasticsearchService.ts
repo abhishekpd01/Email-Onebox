@@ -70,54 +70,39 @@ export class ElasticsearchService {
 
     // ElasticsearchService.ts
 
-    public async searchEmails(query: string, account?: string): Promise<any> {
-        try {
-            // Build the query with optional account filter
-            const mustClauses: any[] = [
-                {
-                    multi_match: {
-                        query: query,
-                        fields: ['subject^2', 'text', 'from.name', 'from.address', 'to.name', 'to.address']
-                    }
-                }
-            ];
+    public async searchEmails(query: string, account?: string) {
+    const searchBody: any = {
+      sort: [{ date: { order: 'desc' } }],
+      size: 100,
+    };
 
-            // Add account filter if provided
-            if (account) {
-                mustClauses.push({
-                    term: {
-                        account: account
-                    }
-                });
-            }
-
-            const result = await this.client.search({
-                index: 'emails',
-                query: {
-                    bool: {
-                        must: mustClauses
-                    }
-                },
-                size: 100, // Adjust as needed
-                sort: [
-                    { date: { order: 'desc' } }
-                ]
-            });
-
-            console.log(`Found ${result.hits.total} matching emails`);
-            
-            // Return formatted results
-            return {
-                total: typeof result.hits.total === 'object' ? result.hits.total.value : result.hits.total,
-                emails: result.hits.hits.map(hit => ({
-                    id: hit._id,
-                    score: hit._score,
-                    ...(typeof hit._source === 'object' && hit._source !== null ? hit._source : {})
-                }))
-            };
-        } catch (error) {
-            console.error('Error searching emails:', error);
-            throw error;
-        }
+    // If there's no query, match all documents. Otherwise, build the query.
+    if (!query) {
+      searchBody.query = { match_all: {} };
+    } else {
+      searchBody.query = {
+        multi_match: {
+          query,
+          fields: ['subject', 'text', 'from.value.address', 'to.value.address'],
+        },
+      };
     }
+    
+    // Add the account filter if it exists
+    if (account) {
+        searchBody.query = {
+            bool: {
+                must: searchBody.query,
+                filter: [{ term: { 'account': account } }],
+            },
+        };
+    }
+
+    const response = await this.client.search({
+      index: 'emails',
+      body: searchBody,
+    });
+
+    return response.hits.hits.map((hit: any) => hit._source);
+  }
 }
