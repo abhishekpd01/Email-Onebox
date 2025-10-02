@@ -3,6 +3,7 @@ import express from 'express';
 import { ImapService } from './ImapService';
 import { ElasticsearchService } from './ElasticsearchService';
 import { AIService } from './AIService';
+import { RagService } from './RagService';
 import { NotificationService } from './NotificationService';
 
 dotenv.config();
@@ -59,6 +60,9 @@ async function main() {
     // Initialize Notification Service
     const notificationService = new NotificationService();
 
+    // Initialize RAG service
+    const ragService = new RagService();
+
     // Start IMAP synchronization for each account
     console.log('Starting Onebox Email Synchronizer...');
     for(const config of accounts) {
@@ -87,6 +91,38 @@ async function main() {
         res.status(500).send({ error: 'Failed to perform search.' });
         }
     });
+
+    app.post('/api/agenda', async (req, res) => {
+        const { text } = req.body;
+        console.log(text);
+        if(!text || typeof text !== 'string') {
+            return res.status(400).json({ error: 'Request body must contain a "text" field.' });
+        }
+
+        try {
+            await ragService.addAgenda(text);
+            res.status(200).json({ message: 'Agenda added Successfully!' });
+        } catch (error) {
+            console.error('Agenda API Error: ', error);
+            res.status(500).json({ error: 'Failed to add Agenda' });
+        }
+    });
+
+    app.post('/api/suggest-reply', async (req, res) => {
+        const { emailContent } = req.body;
+        console.log(emailContent);
+        if(!emailContent || typeof emailContent !== 'string') {
+            return res.status(400).send({ error: 'Request body must contain an "emailContent" field.' });
+        }
+
+        try {
+            const reply = await ragService.generateReply(emailContent);
+            res.json({ reply });
+        } catch (error) {
+            console.error('Suggest Reply API error:', error);
+            res.status(500).send({ error: 'Failed to generate reply.' })
+        }
+    })
 
     app.listen(port, () => console.log(`Server is up and running 🏃 on PORT ${port}`))
 }

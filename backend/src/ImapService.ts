@@ -1,6 +1,5 @@
 import Imap from 'node-imap';
 import { simpleParser } from 'mailparser';
-import { inspect } from 'util';
 import { Readable } from 'stream';
 import { ElasticsearchService, EmailDocument } from './ElasticsearchService';
 import { AIService } from './AIService';
@@ -63,7 +62,7 @@ export class ImapService {
 
             // Sync last 30 days mails
             const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 1);     // for testing 0 days.....
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
             const searchCriteria = ['SINCE', thirtyDaysAgo.toISOString()];
 
             this.imap.search([searchCriteria], (err, results) => {

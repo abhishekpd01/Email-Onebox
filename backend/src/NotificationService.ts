@@ -23,7 +23,7 @@ export class NotificationService {
                     type: 'section',
                     text: {
                         type: 'mrkdwn',
-                        text: `🎉 *New "Interested" Lead!*`,
+                        text: `*New "Interested" Lead!*`,
                     },
                 },
                 {

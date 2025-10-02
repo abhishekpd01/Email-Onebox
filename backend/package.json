@@ -22,9 +22,15 @@
   "dependencies": {
     "@elastic/elasticsearch": "^9.1.1",
     "@google/genai": "^1.21.0",
+    "@langchain/core": "^0.3.78",
+    "@langchain/google-vertexai": "^0.2.18",
+    "@langchain/pinecone": "^0.2.0",
+    "@pinecone-database/pinecone": "^5.1.2",
     "axios": "^1.12.2",
     "dotenv": "^17.2.3",
+    "langchain": "^0.3.35",
     "mailparser": "^3.7.4",
-    "node-imap": "^0.9.6"
+    "node-imap": "^0.9.6",
+    "p-queue": "^9.0.0"
   }
 }
