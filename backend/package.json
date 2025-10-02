@@ -23,6 +23,7 @@
   "dependencies": {
     "@elastic/elasticsearch": "^9.1.1",
     "@google/genai": "^1.21.0",
+    "axios": "^1.12.2",
     "@langchain/core": "^0.3.78",
     "@langchain/google-vertexai": "^0.2.18",
     "@langchain/pinecone": "^0.2.0",
