@@ -18,6 +18,10 @@ export class AIService {
         this.genAI = new GoogleGenAI({ apiKey: apiKey });
     }
 
+    private delay(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     public async categorizeEmail(emailContent: string) : Promise<EmailCategory> {
         const prompt = `
         You are an expert email classifier. Your task is to analyze the email content and classify it into one of the following exact categories:
@@ -38,19 +42,29 @@ export class AIService {
         `;
 
         try {
-            const result = await this.genAI.models.generateContent({
-                model: "gemini-2.5-flash",
-                contents: prompt
-            });
+            // Artificial delay of 50 seconds between calls
+            await this.delay(2000);
+
+            const result = await Promise.race([
+                this.genAI.models.generateContent({
+                    model: "gemini-2.5-pro",
+                    contents: prompt
+                }),
+                new Promise<never>((_, reject) =>
+                    setTimeout(() => reject(new Error("Request timed out after 2s")), 2000)
+                )
+            ]);
+
+            // @ts-ignore - because result is from Promise.race
             const response = result.text;
             console.log(response);
+
             const categoryText = response;
 
-            // validate the response
-            if(this.validCategories.includes(categoryText as EmailCategory)) {
+            if (this.validCategories.includes(categoryText as EmailCategory)) {
                 return categoryText as EmailCategory;
             } else {
-                console.warn(`[AI Service] Received an invalid category: ${categoryText},  defaulting to 'Uncategorized'.`);
+                console.warn(`[AI Service] Received an invalid category: ${categoryText}, defaulting to 'Uncategorized'.`);
                 return 'Uncategorized';
             }
         } catch (error) {
