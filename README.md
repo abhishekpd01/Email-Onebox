@@ -1,4 +1,4 @@
-# **Email Onebox**
+# **Onebox (Intelligent Email Platform with AI Reply Assistant)**
 
 The system is composed of a Node.js (TypeScript) backend for data processing and a React frontend for user interaction.
 
